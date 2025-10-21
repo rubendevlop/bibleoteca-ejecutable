@@ -266,6 +266,108 @@ pre code{ font-size:.95rem; color:inherit; }
   syntax: 'String.raw(texto)',
   code: "console.log(String.raw`Hola\\nMundo`); // Muestra los caracteres de escape"
 },
+// ==== STRING MÉTODOS MODERNOS (replace / regex) ====
+{
+  id: 'str-replace-basic',
+  title: 'replace()',
+  kind: 'método',
+  category: 'String',
+  description: 'Reemplaza la primera coincidencia de un valor o patrón por otro. Si se usa una expresión regular con la bandera global, reemplaza todas.',
+  syntax: 'str.replace(valor, nuevoValor)',
+  code: "const texto = 'JavaScript es genial. Amo JavaScript!';\nconst nuevo = texto.replace('JavaScript', 'JS');\nconsole.log(nuevo); // JS es genial. Amo JavaScript!"
+},
+{
+  id: 'str-replace-global',
+  title: 'replace() con regex global',
+  kind: 'método',
+  category: 'String',
+  description: 'Para reemplazar todas las coincidencias, se usa una expresión regular con la bandera g (global).',
+  syntax: 'str.replace(/regex/g, nuevoValor)',
+  code: "const texto = 'JavaScript es genial. Amo JavaScript!';\nconst nuevo = texto.replace(/JavaScript/g, 'JS');\nconsole.log(nuevo); // JS es genial. Amo JS!"
+},
+{
+  id: 'str-replaceAll',
+  title: 'replaceAll()',
+  kind: 'método',
+  category: 'String',
+  description: 'Reemplaza todas las coincidencias exactas sin necesidad de usar expresiones regulares. Es sensible a mayúsculas/minúsculas.',
+  syntax: 'str.replaceAll(valor, nuevoValor)',
+  code: "const t = 'a_a_a_a';\nconsole.log(t.replaceAll('_','-')); // a-a-a-a"
+},
+{
+  id: 'str-matchAll',
+  title: 'matchAll()',
+  kind: 'método',
+  category: 'String',
+  description: 'Devuelve un iterador con todas las coincidencias de una expresión regular, incluyendo grupos de captura.',
+  syntax: 'str.matchAll(regex)',
+  code: "const frase = 'x1 y2 z3';\nconst regex = /([a-z])(\\d)/g;\nfor (const m of frase.matchAll(regex)) {\n  console.log('Letra:', m[1], 'Número:', m[2]);\n}"
+},
+{
+  id: 'str-replace-func',
+  title: 'replace() con función',
+  kind: 'método',
+  category: 'String',
+  description: 'El segundo argumento de replace puede ser una función que recibe la coincidencia y retorna el reemplazo dinámico.',
+  syntax: 'str.replace(regex, fn)',
+  code: "const texto = 'El precio es 120 y el otro 350';\nconst nuevo = texto.replace(/\\d+/g, function(num){\n  return '[' + num + ']';\n});\nconsole.log(nuevo); // El precio es [120] y el otro [350]"
+},
+{
+  id: 'str-extract-digits',
+  title: 'Extraer números con regex',
+  kind: 'concepto',
+  category: 'String',
+  description: 'Usando expresiones regulares podés obtener todos los números de una cadena.',
+  syntax: 'str.match(/\\d+/g)',
+  code: "const datos = 'Tel: 381-456-789, Código: 2025';\nconst numeros = datos.match(/\\d+/g);\nconsole.log(numeros); // ['381','456','789','2025']"
+},
+{
+  id: 'str-remove-spaces',
+  title: 'Eliminar espacios con regex',
+  kind: 'concepto',
+  category: 'String',
+  description: 'Podés eliminar espacios extras con replace y una expresión regular.',
+  syntax: 'str.replace(/\\s+/g, " ")',
+  code: "const texto = 'Hola     mundo   JS';\nconsole.log(texto.replace(/\\s+/g, ' ')); // Hola mundo JS"
+},
+{
+  id: 'str-remove-accents',
+  title: 'Eliminar acentos',
+  kind: 'concepto',
+  category: 'String',
+  description: 'Combinando normalize() y una expresión regular podés quitar acentos.',
+  syntax: 'str.normalize("NFD").replace(/\\p{Diacritic}/gu, "")',
+  code: "const palabra = 'camión';\nconst sinAcentos = palabra.normalize('NFD').replace(/\\p{Diacritic}/gu, '');\nconsole.log(sinAcentos); // camion"
+},
+{
+  id: 'str-template-alt',
+  title: 'Construir textos concatenando',
+  kind: 'concepto',
+  category: 'String',
+  description: 'En lugar de usar plantillas con ${}, se pueden unir partes con + y espacios manuales.',
+  syntax: 'cadena1 + valor + cadena2',
+  code: "const nombre = 'Rubén';\nconst saludo = 'Hola ' + nombre + ', bienvenido a la biblioteca JS';\nconsole.log(saludo);"
+},
+// ==== STRING Y ARRAY: ORDENAMIENTO DE TEXTOS ====
+{
+  id: 'str-localeCompare-adv',
+  title: 'localeCompare()',
+  kind: 'método',
+  category: 'String',
+  description: 'Compara dos cadenas según las reglas del idioma local. Devuelve un número negativo si la primera va antes, positivo si va después y 0 si son iguales.',
+  syntax: 'str1.localeCompare(str2, [locale], [opciones])',
+  code: "console.log('a'.localeCompare('b')); // -1\nconsole.log('b'.localeCompare('a')); // 1\nconsole.log('a'.localeCompare('a')); // 0\n\n// Comparación sin distinguir mayúsculas\nconsole.log('á'.localeCompare('a', 'es', { sensitivity: 'base' })); // 0"
+},
+{
+  id: 'arr-sort-localeCompare',
+  title: 'sort() con localeCompare()',
+  kind: 'método',
+  category: 'Array',
+  description: 'Ordena un array de cadenas alfabéticamente según el idioma, usando localeCompare para resultados más precisos (considera acentos y mayúsculas).',
+  syntax: 'arr.sort((a, b) => a.localeCompare(b, "es"))',
+  code: "const frutas = ['pera', 'manzana', 'arándano', 'kiwi'];\nfrutas.sort((a, b) => a.localeCompare(b, 'es'));\nconsole.log(frutas); // ['arándano', 'kiwi', 'manzana', 'pera']"
+},
+
     
 
     // ==== MATH METHODS ====
@@ -299,6 +401,342 @@ pre code{ font-size:.95rem; color:inherit; }
     { id:'arr-find', title:'find()/findIndex()', kind:'método', category:'Array', description:'Primera coincidencia o su índice.', syntax:'arr.find(fn)', code:`const u=[{id:1},{id:2}]; console.log(u.find(x=>x.id===2));` },
     { id:'arr-some-every', title:'some()/every()', kind:'método', category:'Array', description:'¿Alguno cumple? / ¿Todos cumplen?', syntax:'arr.some(fn), arr.every(fn)', code:`console.log([1,3,5].some(n=>n%2===0)); // false` },
     { id:'arr-includes', title:'includes()', kind:'método', category:'Array', description:'Contiene un valor.', syntax:'arr.includes(x)', code:`console.log(['a','b'].includes('b'));` },
+    {
+  id: 'arr-sort-basic',
+  title: 'sort() (básico)',
+  kind: 'método',
+  category: 'Array',
+  description: 'Ordena **in place** y por defecto convierte a string (orden lexicográfico).',
+  syntax: 'arr.sort([compareFn])',
+  code: "const a = ['10','2','1'];\nconsole.log(a.sort()); // ['1','10','2']  (lexicográfico)"
+},
+{
+  id: 'arr-sort-numeric-asc',
+  title: 'sort() numérico ascendente',
+  kind: 'método',
+  category: 'Array',
+  description: 'Usá una función de comparación para ordenar números correctamente.',
+  syntax: 'arr.sort((a,b) => a - b)',
+  code: "const nums = [10, 2, 1, 20];\nnums.sort(function(a,b){ return a - b; });\nconsole.log(nums); // [1,2,10,20]"
+},
+{
+  id: 'arr-sort-numeric-desc',
+  title: 'sort() numérico descendente',
+  kind: 'método',
+  category: 'Array',
+  description: 'Invertí la comparación para ordenar de mayor a menor.',
+  syntax: 'arr.sort((a,b) => b - a)',
+  code: "const nums = [10, 2, 1, 20];\nnums.sort(function(a,b){ return b - a; });\nconsole.log(nums); // [20,10,2,1]"
+},
+{
+  id: 'arr-sort-objects-key',
+  title: 'sort() objetos por clave',
+  kind: 'método',
+  category: 'Array',
+  description: 'Ordena objetos comparando una propiedad (string o número).',
+  syntax: 'arr.sort((a,b) => a.clave > b.clave ? 1 : -1)',
+  code: "const users = [{n:'Ana',edad:30},{n:'Luis',edad:22},{n:'Mara',edad:25}];\n// Por número (edad asc)\nusers.sort(function(a,b){ return a.edad - b.edad; });\nconsole.log(users);\n// Por texto (nombre asc básico)\nusers.sort(function(a,b){ return a.n > b.n ? 1 : -1; });\nconsole.log(users);"
+},
+{
+  id: 'arr-sort-dates',
+  title: 'sort() fechas',
+  kind: 'método',
+  category: 'Array',
+  description: 'Convertí a timestamp para ordenar por fecha.',
+  syntax: 'arr.sort((a,b) => new Date(a) - new Date(b))',
+  code: "const fechas = ['2025-10-01','2023-05-10','2024-02-20'];\nfechas.sort(function(a,b){ return new Date(a) - new Date(b); });\nconsole.log(fechas); // ['2023-05-10','2024-02-20','2025-10-01']"
+},
+// ==== ARRAY MÉTODOS AMPLIADOS ====
+{
+  id: 'arr-at',
+  title: 'at()',
+  kind: 'método',
+  category: 'Array',
+  description: 'Devuelve el elemento en la posición indicada. Acepta índices negativos (empieza desde el final).',
+  syntax: 'arr.at(indice)',
+  code: "const letras = ['a','b','c','d'];\nconsole.log(letras.at(0)); // a\nconsole.log(letras.at(-1)); // d"
+},
+{
+  id: 'arr-flat',
+  title: 'flat()',
+  kind: 'método',
+  category: 'Array',
+  description: 'Aplana arrays anidados hasta la profundidad indicada.',
+  syntax: 'arr.flat(profundidad)',
+  code: "const nums = [1,[2,[3,[4]]]];\nconsole.log(nums.flat(2)); // [1,2,3,[4]]"
+},
+{
+  id: 'arr-flatMap',
+  title: 'flatMap()',
+  kind: 'método',
+  category: 'Array',
+  description: 'Aplica map() y luego aplana un nivel. Ideal para transformar y aplanar al mismo tiempo.',
+  syntax: 'arr.flatMap(fn)',
+  code: "const arr = [1,2,3];\nconsole.log(arr.flatMap(x => [x, x*2])); // [1,2,2,4,3,6]"
+},
+{
+  id: 'arr-fill',
+  title: 'fill()',
+  kind: 'método',
+  category: 'Array',
+  description: 'Rellena los elementos con un valor específico desde una posición inicial a final.',
+  syntax: 'arr.fill(valor, inicio?, fin?)',
+  code: "const a = [1,2,3,4];\na.fill(0,1,3);\nconsole.log(a); // [1,0,0,4]"
+},
+{
+  id: 'arr-reverse',
+  title: 'reverse()',
+  kind: 'método',
+  category: 'Array',
+  description: 'Invierte el orden de los elementos en el mismo array.',
+  syntax: 'arr.reverse()',
+  code: "const a = [1,2,3];\na.reverse();\nconsole.log(a); // [3,2,1]"
+},
+{
+  id: 'arr-join',
+  title: 'join()',
+  kind: 'método',
+  category: 'Array',
+  description: 'Convierte todos los elementos en una cadena, separados por el delimitador dado.',
+  syntax: 'arr.join(separador)',
+  code: "const colores = ['rojo','verde','azul'];\nconsole.log(colores.join('-')); // rojo-verde-azul"
+},
+{
+  id: 'arr-slice',
+  title: 'slice()',
+  kind: 'método',
+  category: 'Array',
+  description: 'Devuelve una copia parcial del array, sin modificar el original.',
+  syntax: 'arr.slice(inicio, fin?)',
+  code: "const n = [10,20,30,40];\nconsole.log(n.slice(1,3)); // [20,30]"
+},
+{
+  id: 'arr-splice',
+  title: 'splice()',
+  kind: 'método',
+  category: 'Array',
+  description: 'Agrega o elimina elementos en el mismo array. Modifica el original.',
+  syntax: 'arr.splice(inicio, cantidad, ...items)',
+  code: "const a = ['a','b','c'];\na.splice(1,1,'x','y');\nconsole.log(a); // ['a','x','y','c']"
+},
+{
+  id: 'arr-findLast',
+  title: 'findLast() / findLastIndex()',
+  kind: 'método',
+  category: 'Array',
+  description: 'Devuelven el último elemento (o índice) que cumpla con la condición.',
+  syntax: 'arr.findLast(fn), arr.findLastIndex(fn)',
+  code: "const nums = [1,4,7,4,1];\nconsole.log(nums.findLast(x => x === 4)); // 4\nconsole.log(nums.findLastIndex(x => x === 4)); // 3"
+},
+{
+  id: 'arr-every',
+  title: 'every()',
+  kind: 'método',
+  category: 'Array',
+  description: 'Verifica si todos los elementos cumplen una condición.',
+  syntax: 'arr.every(fn)',
+  code: "const edades = [20,25,30];\nconsole.log(edades.every(e => e >= 18)); // true"
+},
+{
+  id: 'arr-some',
+  title: 'some()',
+  kind: 'método',
+  category: 'Array',
+  description: 'Verifica si al menos uno de los elementos cumple la condición.',
+  syntax: 'arr.some(fn)',
+  code: "const nums = [1,3,5,8];\nconsole.log(nums.some(n => n % 2 === 0)); // true"
+},
+{
+  id: 'arr-from',
+  title: 'Array.from()',
+  kind: 'método estático',
+  category: 'Array',
+  description: 'Crea un nuevo array a partir de un iterable (NodeList, Set, String, etc.).',
+  syntax: 'Array.from(iterable, mapFn?)',
+  code: "const str = 'hola';\nconsole.log(Array.from(str)); // ['h','o','l','a']"
+},
+{
+  id: 'arr-isArray',
+  title: 'Array.isArray()',
+  kind: 'método estático',
+  category: 'Array',
+  description: 'Verifica si el valor proporcionado es un array.',
+  syntax: 'Array.isArray(valor)',
+  code: "console.log(Array.isArray([1,2,3])); // true\nconsole.log(Array.isArray('texto')); // false"
+},
+{
+  id: 'arr-reduceRight',
+  title: 'reduceRight()',
+  kind: 'método',
+  category: 'Array',
+  description: 'Similar a reduce(), pero recorre el array desde el final hacia el inicio.',
+  syntax: 'arr.reduceRight(fn, inicial)',
+  code: "const letras = ['a','b','c'];\nconst rev = letras.reduceRight(function(acc,l){ return acc + l; }, '');\nconsole.log(rev); // cba"
+},
+{
+  id: 'arr-toSorted',
+  title: 'toSorted() (ES2023)',
+  kind: 'método',
+  category: 'Array',
+  description: 'Devuelve una copia ordenada sin modificar el array original (versión inmutable de sort()).',
+  syntax: 'arr.toSorted(fn)',
+  code: "const n = [3,1,2];\nconst ordenado = n.toSorted(function(a,b){ return a - b; });\nconsole.log(ordenado); // [1,2,3]\nconsole.log(n); // [3,1,2]"
+},
+{
+  id: 'arr-toReversed',
+  title: 'toReversed() (ES2023)',
+  kind: 'método',
+  category: 'Array',
+  description: 'Devuelve una copia invertida del array sin modificar el original.',
+  syntax: 'arr.toReversed()',
+  code: "const a = [1,2,3];\nconsole.log(a.toReversed()); // [3,2,1]\nconsole.log(a); // [1,2,3]"
+},
+{
+  id: 'arr-groupBy',
+  title: 'groupBy() (ES2024)',
+  kind: 'método',
+  category: 'Array',
+  description: 'Agrupa los elementos del array en un objeto según el resultado de la función dada.',
+  syntax: 'Object.groupBy(arr, fn)',
+  code: "const frutas = ['manzana','mango','pera','melón'];\nconst grupos = Object.groupBy(frutas, f => f[0]);\nconsole.log(grupos); // { m: ['manzana','mango','melón'], p: ['pera'] }"
+},
+// ==== ARRAY EJERCICIOS ====
+{
+  id: 'arr-ej1-suma',
+  title: 'Suma de elementos',
+  kind: 'ejercicio',
+  category: 'Array',
+  description: 'Suma todos los números de un array usando reduce().',
+  syntax: 'arr.reduce(fn, inicial)',
+  code: "const numeros = [2, 5, 8, 3];\nconst suma = numeros.reduce(function(acc, n){ return acc + n; }, 0);\nconsole.log('Suma total:', suma);"
+},
+{
+  id: 'arr-ej2-max-min',
+  title: 'Máximo y mínimo',
+  kind: 'ejercicio',
+  category: 'Array',
+  description: 'Obtiene el número mayor y menor de un array.',
+  syntax: 'Math.max(...arr), Math.min(...arr)',
+  code: "const nums = [15, 3, 27, 8];\nconsole.log('Máximo:', Math.max(...nums));\nconsole.log('Mínimo:', Math.min(...nums));"
+},
+{
+  id: 'arr-ej3-par-impar',
+  title: 'Separar pares e impares',
+  kind: 'ejercicio',
+  category: 'Array',
+  description: 'Divide los números en dos arrays: pares e impares.',
+  syntax: 'arr.filter(fn)',
+  code: "const numeros = [1,2,3,4,5,6,7,8];\nconst pares = numeros.filter(function(n){ return n % 2 === 0; });\nconst impares = numeros.filter(function(n){ return n % 2 !== 0; });\nconsole.log('Pares:', pares);\nconsole.log('Impares:', impares);"
+},
+{
+  id: 'arr-ej4-promedio',
+  title: 'Promedio de notas',
+  kind: 'ejercicio',
+  category: 'Array',
+  description: 'Calcula el promedio de una lista de notas.',
+  syntax: 'reduce() / length',
+  code: "const notas = [7,8,9,6,10];\nconst promedio = notas.reduce(function(acc,n){ return acc + n; },0) / notas.length;\nconsole.log('Promedio:', promedio.toFixed(2));"
+},
+{
+  id: 'arr-ej5-duplicados',
+  title: 'Eliminar duplicados',
+  kind: 'ejercicio',
+  category: 'Array',
+  description: 'Elimina valores repetidos usando Set.',
+  syntax: '[...new Set(arr)]',
+  code: "const datos = [1,2,2,3,4,4,5];\nconst sinDuplicados = [...new Set(datos)];\nconsole.log(sinDuplicados);"
+},
+{
+  id: 'arr-ej6-contar',
+  title: 'Contar ocurrencias',
+  kind: 'ejercicio',
+  category: 'Array',
+  description: 'Cuenta cuántas veces aparece cada elemento.',
+  syntax: 'reduce() con objeto acumulador',
+  code: "const frutas = ['manzana','pera','manzana','banana'];\nconst conteo = frutas.reduce(function(acc, f){\n  acc[f] = (acc[f] || 0) + 1;\n  return acc;\n}, {});\nconsole.log(conteo);"
+},
+{
+  id: 'arr-ej7-flatten',
+  title: 'Aplanar array anidado',
+  kind: 'ejercicio',
+  category: 'Array',
+  description: 'Convierte un array con subarrays en uno plano.',
+  syntax: 'arr.flat()',
+  code: "const nested = [1,[2,3],[4,[5,6]]];\nconst plano = nested.flat(2);\nconsole.log(plano);"
+},
+{
+  id: 'arr-ej8-reversa',
+  title: 'Invertir array sin modificarlo',
+  kind: 'ejercicio',
+  category: 'Array',
+  description: 'Usa toReversed() (ES2023) o slice().reverse() para no alterar el original.',
+  syntax: 'arr.toReversed() o arr.slice().reverse()',
+  code: "const a = [1,2,3,4];\nconst invertido = a.slice().reverse();\nconsole.log('Original:', a);\nconsole.log('Invertido:', invertido);"
+},
+{
+  id: 'arr-ej9-multiplicar',
+  title: 'Multiplicar todos los elementos',
+  kind: 'ejercicio',
+  category: 'Array',
+  description: 'Calcula el producto de todos los valores del array.',
+  syntax: 'reduce() con multiplicación',
+  code: "const nums = [2,3,4];\nconst producto = nums.reduce(function(acc, n){ return acc * n; }, 1);\nconsole.log('Producto total:', producto);"
+},
+{
+  id: 'arr-ej10-mezclar',
+  title: 'Mezclar elementos (shuffle)',
+  kind: 'ejercicio',
+  category: 'Array',
+  description: 'Desordena los elementos del array aleatoriamente.',
+  syntax: 'sort(() => Math.random() - 0.5)',
+  code: "const letras = ['A','B','C','D','E'];\nletras.sort(function(){ return Math.random() - 0.5; });\nconsole.log('Mezcladas:', letras);"
+},
+{
+  id: 'arr-ej11-filtrar-objetos',
+  title: 'Filtrar objetos por propiedad',
+  kind: 'ejercicio',
+  category: 'Array',
+  description: 'Obtiene los elementos cuyo campo cumpla una condición.',
+  syntax: 'arr.filter(obj => obj.prop === valor)',
+  code: "const usuarios = [\n  {nombre:'Ana', activo:true},\n  {nombre:'Luis', activo:false},\n  {nombre:'Mara', activo:true}\n];\nconst activos = usuarios.filter(function(u){ return u.activo; });\nconsole.log(activos);"
+},
+{
+  id: 'arr-ej12-mapeo-objetos',
+  title: 'Extraer una propiedad de cada objeto',
+  kind: 'ejercicio',
+  category: 'Array',
+  description: 'Crea un nuevo array solo con los nombres de los objetos.',
+  syntax: 'arr.map(obj => obj.prop)',
+  code: "const productos = [\n  {id:1, nombre:'Mouse'},\n  {id:2, nombre:'Teclado'},\n  {id:3, nombre:'Monitor'}\n];\nconst nombres = productos.map(function(p){ return p.nombre; });\nconsole.log(nombres);"
+},
+{
+  id: 'arr-ej13-ordenar-strings',
+  title: 'Ordenar palabras alfabéticamente',
+  kind: 'ejercicio',
+  category: 'Array',
+  description: 'Ordena un array de palabras usando sort() y localeCompare().',
+  syntax: 'arr.sort((a,b) => a.localeCompare(b))',
+  code: "const palabras = ['pera','manzana','arándano','kiwi'];\npalabras.sort(function(a,b){ return a.localeCompare(b); });\nconsole.log(palabras);"
+},
+{
+  id: 'arr-ej14-combinar',
+  title: 'Combinar arrays',
+  kind: 'ejercicio',
+  category: 'Array',
+  description: 'Une varios arrays en uno solo usando spread operator.',
+  syntax: '[...arr1, ...arr2]',
+  code: "const a = [1,2];\nconst b = [3,4];\nconst combinado = [...a, ...b];\nconsole.log(combinado); // [1,2,3,4]"
+},
+{
+  id: 'arr-ej15-transformar',
+  title: 'Transformar datos (map)',
+  kind: 'ejercicio',
+  category: 'Array',
+  description: 'Usa map() para crear un nuevo array con valores transformados.',
+  syntax: 'arr.map(fn)',
+  code: "const precios = [100, 200, 300];\nconst conIVA = precios.map(function(p){ return p * 1.21; });\nconsole.log(conIVA);"
+},
+
     
 
     // ==== LOOPS ====
