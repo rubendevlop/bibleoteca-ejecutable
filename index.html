@@ -1,0 +1,608 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Biblioteca JS – Panel por categorías</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+  <style>
+    :root { --sidebar-w: 300px; }
+body{ background:#0b0c10; color:#ffffff; }
+.app{ display:flex; min-height:100vh; }
+.sidebar{ width:var(--sidebar-w); background:#111318; border-right:1px solid #1f2937; padding:16px; position:sticky; top:0; height:100vh; overflow:auto; }
+.sidebar .brand{ font-weight:800; letter-spacing:.5px; }
+.sidebar .nav-link{ color:#ffffff; border-radius:10px; }
+.sidebar .nav-link.active{ background:#1f2937; color:#fff; }
+.content{ flex:1; padding:24px; color:#ffffff; }
+.card{ background:#12151d; border:1px solid #1f2937; border-radius:16px; color:#ffffff; }
+pre code{ font-size:.95rem; color:inherit; }
+.search{ background:#0f172a; border:1px solid #1f2937; color:#e5e7eb; }
+.method-badge{ font-size:.75rem; border:1px solid #334155; padding:.15rem .45rem; border-radius:999px; color:#94a3b8; }
+.code-toolbar{ position:relative; }
+.run-btn{ position:absolute; top:.5rem; right:.5rem; }
+.output{ background:#0b1020; border:1px dashed #334155; border-radius:12px; padding:12px; white-space:pre-wrap; min-height:54px; color:#ffffff; }
+.footer-note{ color:#ffffff; font-size:.9rem; }
+.kbd{ border:1px solid #374151; padding:.05rem .4rem; border-radius:.4rem; font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; font-size:.85em; color:#ffffff; }
+.table-sm td, .table-sm th{ padding:.4rem .5rem; color:#ffffff; }
+.sticky-header{ position:sticky; top:0; z-index:5; background:#0b0c10; padding-bottom:12px; color:#ffffff; }
+</style>
+</head>
+<body>
+  <div class="app">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="d-flex align-items-center mb-3">
+        <span class="brand h5 mb-0">📚 Biblioteca JS</span>
+      </div>
+      <input id="searchInput" class="form-control search mb-3" placeholder="Buscar método, tema…" />
+
+      <nav class="nav flex-column gap-1" id="categoryNav">
+        <!-- Categorías generadas por JS -->
+      </nav>
+
+      <hr class="border-secondary my-3"/>
+      <div class="small">
+        <div class="mb-1">Atajos:</div>
+        <div><span class="kbd">/</span> Buscar</div>
+        <div><span class="kbd">↑/↓</span> Navegar</div>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="content">
+      <div class="sticky-header d-flex flex-wrap align-items-center gap-2">
+        <h1 class="h4 mb-0" id="title">Bienvenido</h1>
+        <span class="method-badge" id="countBadge">0 items</span>
+      </div>
+      <p class="text-secondary">Selecciona una categoría del panel izquierdo o busca algo como <code>slice</code>, <code>map</code>, <code>querySelector</code>, <code>for</code>, <code>CRUD</code>…</p>
+
+      <div id="cardsContainer" class="row g-3">
+        <!-- Tarjetas generadas por JS -->
+      </div>
+
+      <hr class="border-secondary mt-4"/>
+      <p class="footer-note">Tip: Todos los ejemplos son ejecutables. Haz clic en <strong>Ejecutar</strong> para ver la salida debajo del código. Puedes modificar el snippet antes de ejecutarlo.</p>
+    </main>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <script>
+  // ===== DATASET =====
+  /**
+   * Cada item: { id, title, kind, category, description, syntax, code }
+   * kind: 'método' | 'concepto' | 'API'
+   */
+  const DATA = [
+    // ==== STRING METHODS ====
+    {
+      id: 'str-length',
+      title: 'length',
+      kind: 'método',
+      category: 'String',
+      description: 'Devuelve la longitud de la cadena (propiedad).',
+      syntax: 'str.length',
+      code: `const s = "Hola mundo";\nconsole.log(s.length); // 10`
+    },
+    {
+      id: 'str-toLowerCase',
+      title: 'toLowerCase()',
+      kind: 'método',
+      category: 'String',
+      description: 'Convierte a minúsculas.',
+      syntax: 'str.toLowerCase()',
+      code: `console.log('JAVASCRIPT'.toLowerCase());`
+    },
+    {
+      id: 'str-toUpperCase',
+      title: 'toUpperCase()',
+      kind: 'método',
+      category: 'String',
+      description: 'Convierte a mayúsculas.',
+      syntax: 'str.toUpperCase()',
+      code: `console.log('hola'.toUpperCase());`
+    },
+    {
+      id: 'str-slice',
+      title: 'slice()',
+      kind: 'método',
+      category: 'String',
+      description: 'Extrae parte de la cadena sin modificar la original.',
+      syntax: 'str.slice(inicio, fin?)',
+      code: `const s = 'programación';\nconsole.log(s.slice(0,5)); // 'progr'\nconsole.log(s.slice(-3)); // 'ón'`
+    },
+    {
+      id: 'str-substring',
+      title: 'substring()',
+      kind: 'método',
+      category: 'String',
+      description: 'Similar a slice pero sin índices negativos.',
+      syntax: 'str.substring(inicio, fin?)',
+      code: `const s = 'frontend';\nconsole.log(s.substring(0,5)); // 'front'`
+    },
+    {
+      id: 'str-replace',
+      title: 'replace() / replaceAll()',
+      kind: 'método',
+      category: 'String',
+      description: 'Reemplaza coincidencias. Usar replaceAll para todas.',
+      syntax: 'str.replace(busca, reemplazo)',
+      code: `console.log('a_a_a'.replaceAll('_','-')); // a-a-a`
+    },
+    {
+      id: 'str-trim',
+      title: 'trim()',
+      kind: 'método',
+      category: 'String',
+      description: 'Elimina espacios al inicio y final.',
+      syntax: 'str.trim()',
+      code: `console.log('  hola  '.trim());`
+    },
+    {
+      id: 'str-includes',
+      title: 'includes()',
+      kind: 'método',
+      category: 'String',
+      description: 'Comprueba si contiene un substring.',
+      syntax: 'str.includes(sub, desde?)',
+      code: `console.log('documentación'.includes('doc')); // true`
+    },
+    // ==== STRING MÉTODOS AMPLIADOS (sin ${}) ====
+{
+  id: 'str-charAt',
+  title: 'charAt()',
+  kind: 'método',
+  category: 'String',
+  description: 'Devuelve el carácter en la posición indicada.',
+  syntax: 'str.charAt(pos)',
+  code: "const texto = 'Hola';\nconsole.log(texto.charAt(0)); // H"
+},
+{
+  id: 'str-charCodeAt',
+  title: 'charCodeAt()',
+  kind: 'método',
+  category: 'String',
+  description: 'Devuelve el código Unicode del carácter en la posición dada.',
+  syntax: 'str.charCodeAt(pos)',
+  code: "console.log('A'.charCodeAt(0)); // 65"
+},
+{
+  id: 'str-indexOf',
+  title: 'indexOf() / lastIndexOf()',
+  kind: 'método',
+  category: 'String',
+  description: 'Busca una subcadena y devuelve la posición de la primera o última aparición.',
+  syntax: 'str.indexOf(sub, desde?)',
+  code: "const t = 'banana';\nconsole.log(t.indexOf('a'));     // 1\nconsole.log(t.lastIndexOf('a')); // 5"
+},
+{
+  id: 'str-startsEndsWith',
+  title: 'startsWith() / endsWith()',
+  kind: 'método',
+  category: 'String',
+  description: 'Comprueba si una cadena comienza o termina con una subcadena determinada.',
+  syntax: 'str.startsWith(sub), str.endsWith(sub)',
+  code: "const nombre = 'JavaScript';\nconsole.log(nombre.startsWith('Java')); // true\nconsole.log(nombre.endsWith('Script')); // true"
+},
+{
+  id: 'str-repeat',
+  title: 'repeat()',
+  kind: 'método',
+  category: 'String',
+  description: 'Repite una cadena el número de veces indicado.',
+  syntax: 'str.repeat(n)',
+  code: "console.log('Hi '.repeat(3)); // Hi Hi Hi "
+},
+{
+  id: 'str-split',
+  title: 'split()',
+  kind: 'método',
+  category: 'String',
+  description: 'Divide la cadena en un array según un separador.',
+  syntax: 'str.split(separador)',
+  code: "const csv = 'rojo,verde,azul';\nconsole.log(csv.split(',')); // ['rojo','verde','azul']"
+},
+{
+  id: 'str-concat',
+  title: 'concat()',
+  kind: 'método',
+  category: 'String',
+  description: 'Une dos o más cadenas. Equivalente a usar +.',
+  syntax: 'str.concat(otra)',
+  code: "console.log('Hola'.concat(' ', 'mundo')); // Hola mundo"
+},
+{
+  id: 'str-padStartEnd',
+  title: 'padStart() / padEnd()',
+  kind: 'método',
+  category: 'String',
+  description: 'Rellena la cadena hasta alcanzar una longitud específica.',
+  syntax: 'str.padStart(long, relleno)',
+  code: "console.log('5'.padStart(3, '0')); // 005\nconsole.log('7'.padEnd(4, '.')); // 7..."
+},
+{
+  id: 'str-match',
+  title: 'match() / matchAll()',
+  kind: 'método',
+  category: 'String',
+  description: 'Busca coincidencias con una expresión regular.',
+  syntax: 'str.match(regex)',
+  code: "const frase = 'uno dos tres dos';\nconsole.log(frase.match(/dos/g)); // ['dos','dos']"
+},
+{
+  id: 'str-search',
+  title: 'search()',
+  kind: 'método',
+  category: 'String',
+  description: 'Devuelve el índice de la primera coincidencia de una expresión regular.',
+  syntax: 'str.search(regex)',
+  code: "const txt = 'La casa es verde';\nconsole.log(txt.search(/verde/)); // 11"
+},
+{
+  id: 'str-localeCompare',
+  title: 'localeCompare()',
+  kind: 'método',
+  category: 'String',
+  description: 'Compara dos cadenas según las reglas del idioma local.',
+  syntax: 'str.localeCompare(otra)',
+  code: "console.log('a'.localeCompare('b')); // -1"
+},
+{
+  id: 'str-normalize',
+  title: 'normalize()',
+  kind: 'método',
+  category: 'String',
+  description: 'Normaliza la representación Unicode (por ejemplo, elimina acentos combinados).',
+  syntax: 'str.normalize(form)',
+  code: "const t = 'café';\nconsole.log(t.normalize('NFD'));"
+},
+{
+  id: 'str-raw',
+  title: 'String.raw',
+  kind: 'método estático',
+  category: 'String',
+  description: 'Devuelve una cadena “sin escapar” útil para plantillas literales.',
+  syntax: 'String.raw(texto)',
+  code: "console.log(String.raw`Hola\\nMundo`); // Muestra los caracteres de escape"
+},
+    
+
+    // ==== MATH METHODS ====
+    {
+      id: 'math-round', title:'Math.round()', kind:'método', category:'Math',
+      description:'Redondeo al entero más cercano.', syntax:'Math.round(x)',
+      code:`console.log(Math.round(3.6)); // 4` },
+    {
+      id: 'math-floor', title:'Math.floor()', kind:'método', category:'Math',
+      description:'Redondeo hacia abajo.', syntax:'Math.floor(x)',
+      code:`console.log(Math.floor(3.9)); // 3` },
+    {
+      id: 'math-ceil', title:'Math.ceil()', kind:'método', category:'Math',
+      description:'Redondeo hacia arriba.', syntax:'Math.ceil(x)',
+      code:`console.log(Math.ceil(3.1)); // 4` },
+    {
+      id: 'math-random', title:'Math.random()', kind:'método', category:'Math',
+      description:'Número pseudo-aleatorio [0,1).', syntax:'Math.random()',
+      code:`// Entero 1..6\nconst dado = Math.floor(Math.random()*6)+1;\nconsole.log(dado);` },
+    {
+      id: 'math-max-min', title:'Math.max()/Math.min()', kind:'método', category:'Math',
+      description:'Máximo y mínimo de una lista.', syntax:'Math.max(...arr)',
+      code:`console.log(Math.max(2,9,4)); // 9\nconsole.log(Math.min(2,9,4)); // 2` },
+
+    // ==== ARRAY METHODS ====
+    { id:'arr-push', title:'push()/pop()', kind:'método', category:'Array', description:'Agrega/Quita al final.', syntax:'arr.push(x), arr.pop()', code:`const a=[1,2]; a.push(3); console.log(a); a.pop(); console.log(a);` },
+    { id:'arr-unshift', title:'unshift()/shift()', kind:'método', category:'Array', description:'Agrega/Quita al inicio.', syntax:'arr.unshift(x), arr.shift()', code:`const a=[1,2]; a.unshift(0); console.log(a); a.shift(); console.log(a);` },
+    { id:'arr-map', title:'map()', kind:'método', category:'Array', description:'Transforma cada elemento y retorna nuevo array.', syntax:'arr.map(fn)', code:`const dobles=[1,2,3].map(n=>n*2); console.log(dobles);` },
+    { id:'arr-filter', title:'filter()', kind:'método', category:'Array', description:'Filtra según condición.', syntax:'arr.filter(fn)', code:`const pares=[1,2,3,4].filter(n=>n%2===0); console.log(pares);` },
+    { id:'arr-reduce', title:'reduce()', kind:'método', category:'Array', description:'Acumula a un valor.', syntax:'arr.reduce(fn, init?)', code:`const suma=[1,2,3].reduce((acc,n)=>acc+n,0); console.log(suma);` },
+    { id:'arr-find', title:'find()/findIndex()', kind:'método', category:'Array', description:'Primera coincidencia o su índice.', syntax:'arr.find(fn)', code:`const u=[{id:1},{id:2}]; console.log(u.find(x=>x.id===2));` },
+    { id:'arr-some-every', title:'some()/every()', kind:'método', category:'Array', description:'¿Alguno cumple? / ¿Todos cumplen?', syntax:'arr.some(fn), arr.every(fn)', code:`console.log([1,3,5].some(n=>n%2===0)); // false` },
+    { id:'arr-includes', title:'includes()', kind:'método', category:'Array', description:'Contiene un valor.', syntax:'arr.includes(x)', code:`console.log(['a','b'].includes('b'));` },
+    
+
+    // ==== LOOPS ====
+    { id:'loop-for', title:'for', kind:'concepto', category:'Bucles', description:'Iteración con contador.', syntax:'for (let i=0;i<n;i++) {...}', code:`for (let i=0;i<3;i++){ console.log('i =', i); }` },
+    { id:'loop-do', title:'do', kind:'concepto', category:'Bucles', description:'Ejecuta al menos una vez.', syntax:'do { ... } while (cond)', code:`let i=0; do { console.log(i); i++; } while(i<3);` },
+    { id:'loop-do-while', title:'do...while', kind:'concepto', category:'Bucles', description:'Variante que evalúa al final.', syntax:'do { ... } while (cond)', code:`let p=5; do{ console.log('p', p); p--; }while(p>2);` },
+
+    // ==== SWITCH ====
+    { id:'switch-basic', title:'switch', kind:'concepto', category:'Switch', description:'Selección múltiple.', syntax:'switch(x){case A:...; break; default:...}', code:`const rol='admin';\nswitch(rol){\n  case 'admin': console.log('Panel completo'); break;\n  case 'editor': console.log('Panel parcial'); break;\n  default: console.log('Invitado');\n}` },
+
+    // ==== DOM COMPLETO (resumen práctico) ====
+    { id:'dom-selectores', title:'Selectores (querySelector / All)', kind:'API', category:'DOM', description:'Obtiene nodos del documento.', syntax:"document.querySelector(sel)", code:`const h1 = document.querySelector('h1');\nconsole.log(h1?.textContent);` },
+    { id:'dom-crear', title:'Crear/insertar nodos', kind:'API', category:'DOM', description:'createElement, append, before…', syntax:'document.createElement(tag)', code:`const el = document.createElement('div');\nel.textContent = 'Hola DOM';\nel.className = 'p-2';\ndocument.body.append(el);` },
+    { id:'dom-clases', title:'classList', kind:'API', category:'DOM', description:'Agregar/quitar/toggle clases.', syntax:'el.classList.add(name)', code:`const box = document.createElement('div');\nbox.classList.add('p-2');\nbox.classList.toggle('rounded');\ndocument.body.append(box);` },
+    { id:'dom-atributos', title:'Atributos', kind:'API', category:'DOM', description:'setAttribute/getAttribute', syntax:'el.setAttribute(name,val)', code:`const a=document.createElement('a');\na.setAttribute('href','#'); a.textContent='link';\ndocument.body.append(a);` },
+    { id:'dom-eventos', title:'Eventos (addEventListener)', kind:'API', category:'DOM', description:'Escuchar y manejar eventos.', syntax:'el.addEventListener(tipo, fn)', code:`const btn=document.createElement('button');\nbtn.textContent='Click!';\nbtn.addEventListener('click', ()=>console.log('clicked'));\ndocument.body.append(btn);` },
+    // ==== DOM AMPLIADO ====
+{
+  id: 'dom-getElementById',
+  title: 'getElementById()',
+  kind: 'API',
+  category: 'DOM',
+  description: 'Selecciona un elemento por su atributo id. Devuelve un solo elemento o null si no existe.',
+  syntax: 'document.getElementById(id)',
+  code: `// HTML: <h1 id="titulo">Hola</h1>
+const el = document.getElementById('titulo');
+console.log(el.textContent);`
+},
+{
+  id: 'dom-querySelectorAll',
+  title: 'querySelectorAll()',
+  kind: 'API',
+  category: 'DOM',
+  description: 'Devuelve una NodeList (similar a array) con todos los elementos que coincidan con el selector.',
+  syntax: 'document.querySelectorAll(sel)',
+  code: `// HTML: <p>1</p><p>2</p><p>3</p>
+const ps = document.querySelectorAll('p');
+ps.forEach(p => console.log(p.textContent));`
+},
+{
+  id: 'dom-innerHTML',
+  title: 'innerHTML',
+  kind: 'propiedad',
+  category: 'DOM',
+  description: 'Permite leer o establecer contenido HTML dentro de un elemento.',
+  syntax: 'element.innerHTML',
+  code: `const div = document.createElement('div');
+div.innerHTML = '<b>Hola</b> mundo';
+document.body.append(div);
+console.log(div.innerHTML);`
+},
+{
+  id: 'dom-textContent',
+  title: 'textContent',
+  kind: 'propiedad',
+  category: 'DOM',
+  description: 'Devuelve o define el texto de un nodo sin interpretar etiquetas HTML.',
+  syntax: 'element.textContent',
+  code: `const el = document.createElement('p');
+el.textContent = '<b>Sin formato</b>';
+document.body.append(el);`
+},
+{
+  id: 'dom-style',
+  title: 'style',
+  kind: 'propiedad',
+  category: 'DOM',
+  description: 'Permite modificar estilos en línea del elemento.',
+  syntax: 'element.style.prop = valor',
+  code: `const box = document.createElement('div');
+box.textContent = 'Caja';
+box.style.background = 'orange';
+box.style.padding = '10px';
+document.body.append(box);`
+},
+{
+  id: 'dom-appendChild',
+  title: 'appendChild() / removeChild()',
+  kind: 'método',
+  category: 'DOM',
+  description: 'Agrega o elimina nodos hijos en un elemento padre.',
+  syntax: 'parent.appendChild(node)',
+  code: `const lista = document.createElement('ul');
+const li = document.createElement('li');
+li.textContent = 'Elemento 1';
+lista.appendChild(li);
+document.body.append(lista);
+lista.removeChild(li);`
+},
+{
+  id: 'dom-insertAdjacent',
+  title: 'insertAdjacentHTML()',
+  kind: 'método',
+  category: 'DOM',
+  description: 'Inserta HTML en una posición relativa al elemento: beforebegin, afterbegin, beforeend, afterend.',
+  syntax: 'element.insertAdjacentHTML(pos, html)',
+  code: `document.body.insertAdjacentHTML('afterbegin', '<h3>Insertado dinámicamente</h3>');`
+},
+{
+  id: 'dom-parent-child',
+  title: 'parentNode / children',
+  kind: 'propiedad',
+  category: 'DOM',
+  description: 'Permite navegar la jerarquía de nodos: obtener el padre, hijos, primer o último hijo.',
+  syntax: 'el.parentNode, el.children',
+  code: `const cont = document.createElement('div');
+cont.innerHTML = '<p>A</p><p>B</p>';
+document.body.append(cont);
+console.log(cont.children.length);`
+},
+{
+  id: 'dom-evento-input',
+  title: 'Eventos de entrada (input/change)',
+  kind: 'API',
+  category: 'DOM',
+  description: 'Permite capturar la entrada del usuario en tiempo real o al cambiar el valor.',
+  syntax: 'element.addEventListener("input", fn)',
+  code: `const input = document.createElement('input');
+input.placeholder = 'Escribe algo';
+document.body.append(input);
+input.addEventListener('input', ()=> console.log(input.value));`
+},
+{
+  id: 'dom-event-delegation',
+  title: 'Delegación de eventos',
+  kind: 'concepto',
+  category: 'DOM',
+  description: 'Permite manejar eventos desde un elemento padre para muchos hijos, útil en listas dinámicas.',
+  syntax: 'parent.addEventListener("click", fn)',
+  code: `const ul = document.createElement('ul');
+ul.innerHTML = '<li>A</li><li>B</li><li>C</li>';
+document.body.append(ul);
+
+ul.addEventListener('click', e => {
+  if(e.target.tagName === 'LI'){
+    console.log('Click en', e.target.textContent);
+  }
+});`
+},
+{
+  id: 'dom-setTimeout-interval',
+  title: 'Timers y DOM',
+  kind: 'concepto',
+  category: 'DOM',
+  description: 'Los métodos setTimeout y setInterval pueden manipular el DOM con retardo o repetición.',
+  syntax: 'setTimeout(fn, ms), setInterval(fn, ms)',
+  code: `const msg = document.createElement('div');
+document.body.append(msg);
+let n=0;
+setInterval(()=>{ msg.textContent = 'Contador: '+(++n); },1000);`
+},
+
+
+    // ==== OBJETOS ====
+    { id:'obj-literal', title:'Objeto literal', kind:'concepto', category:'Objetos', description:'Clave/valor, métodos.', syntax:'const o = {a:1, b(){}}', code:`const user={ nombre:'Ana', saludar(){ return 'Hola '+this.nombre; } };\nconsole.log(user.saludar());` },
+    { id:'obj-destructuring', title:'Destructuring', kind:'concepto', category:'Objetos', description:'Extrae propiedades fácilmente.', syntax:'const {a,b} = obj', code:`const conf={tema:'dark', lang:'es'};\nconst {tema} = conf;\nconsole.log(tema);` },
+    { id:'obj-spread', title:'Spread/Rest', kind:'concepto', category:'Objetos', description:'Copiar/combinar objetos.', syntax:'{...obj}', code:`const base={a:1};\nconst ext={...base, b:2};\nconsole.log(ext);` },
+
+    // ==== CRUD MINI DEMO (en memoria) ====
+    { id:'crud-mini', title:'CRUD (mini demo in-memory)', kind:'concepto', category:'CRUD', description:'Crear/Leer/Actualizar/Borrar sobre un array.', syntax:'add/read/update/delete', code:`// CRUD simple sobre un array de tareas\nlet tareas=[];\n// C: create\nfunction crear(titulo){ tareas.push({id:Date.now(), titulo, done:false}); }\n// R: read\nfunction listar(){ return tareas; }\n// U: update\nfunction completar(id){ const t=tareas.find(x=>x.id===id); if(t) t.done=!t.done; }\n// D: delete\nfunction eliminar(id){ tareas = tareas.filter(x=>x.id!==id); }\n\ncrear('Aprender map');\ncrear('Practicar DOM');\nconsole.log('Inicial:', listar());\nconst id=tareas[0].id;\ncompletar(id);\nconsole.log('Después de completar:', listar());\neliminar(id);\nconsole.log('Después de eliminar:', listar());` },
+  ];
+
+  // ==== CATEGORÍAS EN ORDEN ====
+  const CATEGORY_ORDER = ['String','Math','Array','Bucles','Switch','DOM','Objetos','CRUD'];
+
+  // ==== RENDER NAV ====
+  const nav = document.getElementById('categoryNav');
+  CATEGORY_ORDER.forEach(cat=>{
+    const a=document.createElement('a');
+    a.href = `#${cat}`;
+    a.dataset.category = cat;
+    a.className='nav-link px-3 py-2';
+    a.textContent = cat;
+    a.addEventListener('click', (e)=>{
+      e.preventDefault();
+      selectCategory(cat);
+      document.querySelectorAll('#categoryNav .nav-link').forEach(n=>n.classList.remove('active'));
+      a.classList.add('active');
+    });
+    nav.append(a);
+  });
+
+  // ==== RENDER CARDS ====
+  const cardsContainer = document.getElementById('cardsContainer');
+  const titleEl = document.getElementById('title');
+  const countBadge = document.getElementById('countBadge');
+
+  function renderCards(items, heading){
+    titleEl.textContent = heading || 'Resultados';
+    countBadge.textContent = `${items.length} item${items.length!==1?'s':''}`;
+
+    cardsContainer.innerHTML='';
+    items.forEach(item=>{
+      const col = document.createElement('div');
+      col.className='col-12 col-md-6 col-xl-4';
+
+      const card = document.createElement('div');
+      card.className='card h-100';
+
+      const body = document.createElement('div');
+      body.className='card-body';
+
+      const h5 = document.createElement('h5');
+      h5.className='card-title d-flex justify-content-between align-items-start';
+      h5.innerHTML = `<span>${item.title}</span> <span class="method-badge">${item.kind}</span>`;
+
+      const small = document.createElement('div');
+      small.className='text-secondary mb-2';
+      small.textContent = `${item.category} • ${item.syntax}`;
+
+      const p = document.createElement('p');
+      p.className='card-text';
+      p.textContent = item.description;
+
+      const pre = document.createElement('pre');
+      pre.className='code-toolbar position-relative';
+      const code = document.createElement('code');
+      code.className='language-js';
+      code.contentEditable = true;
+      code.spellcheck = false;
+      code.textContent = item.code;
+      pre.append(code);
+
+      const run = document.createElement('button');
+      run.className='btn btn-sm btn-light run-btn';
+      run.textContent='Ejecutar';
+      run.addEventListener('click', ()=> runSnippet(code.innerText, out));
+      pre.append(run);
+
+      const out = document.createElement('div');
+      out.className='output mt-2';
+      out.textContent = 'Salida…';
+
+      body.append(h5, small, p, pre, out);
+      card.append(body);
+      col.append(card);
+      cardsContainer.append(col);
+
+      // destacar
+      try{ hljs.highlightElement(code); }catch{ /* ignore */ }
+    });
+  }
+
+  // ==== RUNNER ====
+  function runSnippet(src, outputEl){
+    // Capturar console.log
+    const logs = [];
+    const origLog = console.log;
+    console.log = (...args)=>{
+      logs.push(args.map(a=>{
+        try{ return typeof a==='object' ? JSON.stringify(a, null, 2) : String(a); }
+        catch{ return String(a); }
+      }).join(' '));
+      origLog.apply(console, args);
+    };
+
+    // Ejecutar aislado
+    try{
+      new Function(src)();
+      outputEl.textContent = logs.join('\n') || '(sin salida)';
+    }catch(err){
+      outputEl.textContent = '⚠️ Error: ' + err.message;
+    }finally{
+      console.log = origLog;
+    }
+  }
+
+  // ==== CATEGORY FILTER ====
+  function selectCategory(cat){
+    const items = DATA.filter(x=>x.category===cat);
+    renderCards(items, cat);
+    // Marcar en nav
+    const link = [...document.querySelectorAll('#categoryNav .nav-link')].find(a=>a.dataset.category===cat);
+    if(link){ link.classList.add('active'); }
+    // Actualizar hash
+    location.hash = cat;
+  }
+
+  // ==== SEARCH ====
+  const search = document.getElementById('searchInput');
+  search.addEventListener('input', ()=>{
+    const q = search.value.trim().toLowerCase();
+    if(!q){
+      const cat = currentCategory() || CATEGORY_ORDER[0];
+      selectCategory(cat);
+    }else{
+      const items = DATA.filter(x=> `${x.title} ${x.category} ${x.syntax} ${x.description}`.toLowerCase().includes(q));
+      renderCards(items, `Resultados para "${q}"`);
+    }
+  });
+  // Atajo '/'
+  document.addEventListener('keydown', (e)=>{
+    if(e.key === '/' && document.activeElement !== search){ e.preventDefault(); search.focus(); }
+  });
+
+  function currentCategory(){ return location.hash?.replace('#',''); }
+
+  // Inicialización
+  (function init(){
+    // Render nav + categoría inicial
+    const initial = currentCategory() && CATEGORY_ORDER.includes(currentCategory()) ? currentCategory() : CATEGORY_ORDER[0];
+    selectCategory(initial);
+  })();
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
